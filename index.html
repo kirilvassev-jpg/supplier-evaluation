@@ -1078,7 +1078,7 @@
                 // Изпращане към SharePoint
                 const flowUrl = 'https://default0b822811c53c4f5e9444350c2fb3f9.35.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e623f8e8b3fb4957adf7223ca0098e5a/triggers/manual/paths/invoke?api-version=1';
 
-                await fetch(flowUrl, {
+                const flowResponse = await fetch(flowUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1091,6 +1091,10 @@
                         total: total
                     })
                 });
+
+                if (!flowResponse.ok) {
+                    throw new Error(`Грешка при изпращане към SharePoint: ${flowResponse.status} ${flowResponse.statusText}`);
+                }
 
                 if (!ratedSuppliersByUser.has(evaluator)) {
                     ratedSuppliersByUser.set(evaluator, new Set());
