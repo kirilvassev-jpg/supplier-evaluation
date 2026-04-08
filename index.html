@@ -1075,6 +1075,23 @@
                     generateCSV(baseFilename)
                 ]);
 
+                // Изпращане към SharePoint
+                const flowUrl = 'https://default0b822811c53c4f5e9444350c2fb3f9.35.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e623f8e8b3fb4957adf7223ca0098e5a/triggers/manual/paths/invoke?api-version=1';
+
+                await fetch(flowUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        evaluator: evaluator,
+                        supplier: supplier,
+                        date: date,
+                        quality: quality,
+                        delivery: delivery,
+                        documentation: documentation,
+                        total: total
+                    })
+                });
+
                 if (!ratedSuppliersByUser.has(evaluator)) {
                     ratedSuppliersByUser.set(evaluator, new Set());
                 }
@@ -1093,7 +1110,7 @@
                 calculateTotal();
                 updateSupplierOptions();
 
-                alert('PDF и CSV файловете са генерирани успешно!');
+                alert('PDF и CSV файловете са генерирани и данните са запазени в SharePoint!');
             } catch (error) {
                 console.error('Грешка при генериране на файлове:', error);
                 alert(`Възникна грешка при генериране на файловете: ${error.message || error}. Проверете конзолата на браузъра за повече информация.`);
