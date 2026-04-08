@@ -1069,11 +1069,8 @@
                 // Generate consistent base filename
                 const baseFilename = generateBaseFilename();
                 
-                // Generate both files with the same base name
-                await Promise.all([
-                    generatePDF(baseFilename),
-                    generateCSV(baseFilename)
-                ]);
+                // Генериране на PDF
+                await generatePDF(baseFilename);
 
                 // Изпращане към SharePoint
                 const flowUrl = 'https://default0b822811c53c4f5e9444350c2fb3f9.35.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e623f8e8b3fb4957adf7223ca0098e5a/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=sOmLQ3ahtKwobEKfY0X7ztFWbdCGg9mvHaVGmWYc0Fs';
@@ -1114,7 +1111,7 @@
                 calculateTotal();
                 updateSupplierOptions();
 
-                alert('PDF и CSV файловете са генерирани и данните са запазени в SharePoint!');
+                alert('PDF файлът е генериран и данните са запазени в SharePoint!');
             } catch (error) {
                 console.error('Грешка при генериране на файлове:', error);
                 alert(`Възникна грешка при генериране на файловете: ${error.message || error}. Проверете конзолата на браузъра за повече информация.`);
@@ -1156,38 +1153,7 @@
             if (wasHidden) classificationDiv.style.display = 'none';
         }
     
-        function generateCSV(baseFilename) {
-            const evaluator = document.getElementById('evaluator').value;
-            const supplier = document.getElementById('supplier').value;
-            const date = document.getElementById('date').value;
 
-            const quality = parseInt(document.getElementById('quality').value) || 0;
-            const delivery = parseInt(document.getElementById('delivery').value) || 0;
-            const documentation = parseInt(document.getElementById('documentation').value) || 0;
-            const price = parseInt(document.getElementById('price').value) || 0;
-            const total = quality + delivery + documentation + price;
-
-            let classificationText = '';
-            if (total > 70) classificationText = 'ВОДЕЩ ДОСТАВЧИК';
-            else if (total >= 50) classificationText = 'УТВЪРДЕН ДОСТАВЧИК';
-            else if (total >= 40) classificationText = 'ДОПУСТИМ ДОСТАВЧИК';
-            else if (total > 0) classificationText = 'НЕНАДЕЖДЕН ДОСТАВЧИК';
-
-            const csvContent = [
-                ['Оценяващ служител', 'Доставчик', 'Дата', 'Качество', 'Изпълнение', 'Документация', 'Цена', 'Общо точки', 'Класификация'],
-                [evaluator, supplier, date, quality, delivery, documentation, price, total, classificationText]
-            ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.setAttribute('href', url);
-            link.setAttribute('download', `${baseFilename}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
     </script>
 </body>
 </html>
