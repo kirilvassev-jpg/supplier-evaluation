@@ -1073,7 +1073,16 @@
                 await generatePDF(baseFilename);
 
                 // Изпращане към SharePoint
-                const flowUrl = 'https://default0b822811c53c4f5e9444350c2fb3f9.35.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d6c85a121eca4e668c17649ba84782c5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=k8gPxb90Cb6OqtcSoJ1c7SzE3ji-1y55Q6T0iiwokLY';
+                let flowUrl = localStorage.getItem('supplierEvalFlowUrl');
+                if (!flowUrl) {
+                    flowUrl = prompt('Въведете Flow URL за SharePoint (ще бъде запазен в браузъра):');
+                    if (!flowUrl) {
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('pdfBtn').disabled = false;
+                        return;
+                    }
+                    localStorage.setItem('supplierEvalFlowUrl', flowUrl);
+                }
 
                 const flowResponse = await fetch(flowUrl, {
                     method: 'POST',
