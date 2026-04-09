@@ -1018,7 +1018,11 @@
 
             Array.from(supplierSelect.options).forEach(option => {
                 if (option.value === "") return;
-                option.disabled = ratedSet.has(option.value);
+                const isRated = ratedSet.has(option.value);
+                option.disabled = isRated;
+                option.textContent = isRated
+                    ? `${option.value} ✓ (вече оценен)`
+                    : option.value;
             });
             
             if (supplierSelect.value && ratedSet.has(supplierSelect.value)) {
