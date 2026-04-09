@@ -908,8 +908,16 @@
             "Кристияна Лазарова"
         ];
 
-        // Карта за съхранение на оценени доставчици по оценяващ служител
-        const ratedSuppliersByUser = new Map();
+        // Карта за съхранение на оценени доставчици по оценяващ служител (localStorage)
+        function loadRatedSuppliers() {
+            const data = localStorage.getItem('ratedSuppliersByUser');
+            if (!data) return new Map();
+            return new Map(JSON.parse(data).map(([k, v]) => [k, new Set(v)]));
+        }
+        function saveRatedSuppliers(map) {
+            localStorage.setItem('ratedSuppliersByUser', JSON.stringify([...map.entries()].map(([k, v]) => [k, [...v]])));
+        }
+        const ratedSuppliersByUser = loadRatedSuppliers();
 
         document.addEventListener('DOMContentLoaded', () => {
             const evaluatorSelect = document.getElementById('evaluator');
@@ -1113,6 +1121,7 @@
                     ratedSuppliersByUser.set(evaluator, new Set());
                 }
                 ratedSuppliersByUser.get(evaluator).add(supplier);
+                saveRatedSuppliers(ratedSuppliersByUser);
 
                 const selectedOption = supplierSelect.querySelector(`option[value="${supplier}"]`);
                 if (selectedOption) {
