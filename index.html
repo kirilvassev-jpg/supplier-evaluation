@@ -1057,6 +1057,12 @@
             const price = parseInt(document.getElementById('price').value) || 0;
             const total = quality + delivery + documentation + price;
 
+            let classification = '';
+            if (total > 70) classification = 'ВОДЕЩ ДОСТАВЧИК';
+            else if (total >= 50) classification = 'УТВЪРДЕН ДОСТАВЧИК';
+            else if (total >= 40) classification = 'ДОПУСТИМ ДОСТАВЧИК';
+            else if (total > 0) classification = 'НЕНАДЕЖДЕН ДОСТАВЧИК';
+
             if (quality === 0 && delivery === 0 && documentation === 0 && price === 0) {
                 alert('Моля, въведете оценки за качество, изпълнение, документация или цена преди генериране на файлове!');
                 return;
@@ -1094,7 +1100,8 @@
                         quality: quality,
                         delivery: delivery,
                         documentation: documentation,
-                        total: total
+                        total: total,
+                        classification: classification
                     })
                 });
 
