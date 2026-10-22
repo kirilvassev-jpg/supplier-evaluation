@@ -145,6 +145,7 @@
         .admin-hint { font-size:13px; color:#7f6a2b; margin:8px 0; }
         .admin-status { margin:8px 0; font-weight:600; font-size:14px; }
         .admin-btn { background:#27ae60; color:#fff; border:none; border-radius:6px; padding:8px 16px; font-size:14px; cursor:pointer; }
+        select.field-error { border-color: #e74c3c !important; background: #fdecea; }
     </style>
 </head>
 <body>
@@ -329,6 +330,11 @@
             });
         });
 
+        // Махане на червената рамка, когато полето бъде попълнено
+        document.addEventListener('change', (e) => {
+            if (e.target && e.target.classList) e.target.classList.remove('field-error');
+        });
+
         function rebuildSupplierDropdown() {
             const select = document.getElementById('supplier');
             select.innerHTML = '<option value="">Изберете доставчик</option>';
@@ -494,16 +500,28 @@
                 return;
             }
 
+            // Задължителен избор на точки по всички критерии (0 е валидна стойност)
+            const scoreFields = [
+                { id: 'quality', label: 'Точки за качество' },
+                { id: 'delivery', label: 'Точки за изпълнение и отзивчивост' },
+                { id: 'documentation', label: 'Точки за документация' },
+                { id: 'price', label: 'Точки за цена и условия' }
+            ];
+            const missing = scoreFields.filter(f => document.getElementById(f.id).value === '');
+            scoreFields.forEach(f => document.getElementById(f.id).classList.remove('field-error'));
+            if (missing.length > 0) {
+                missing.forEach(f => document.getElementById(f.id).classList.add('field-error'));
+                document.getElementById(missing[0].id).focus();
+                alert('Моля, изберете точки за всички критерии. Липсват:\n- ' + missing.map(f => f.label).join('\n- '));
+                return;
+            }
+
             const quality = parseInt(document.getElementById('quality').value) || 0;
             const delivery = parseInt(document.getElementById('delivery').value) || 0;
             const documentation = parseInt(document.getElementById('documentation').value) || 0;
             const price = parseInt(document.getElementById('price').value) || 0;
             const total = quality + delivery + documentation + price;
 
-            if (quality === 0 && delivery === 0 && documentation === 0 && price === 0) {
-                alert('Моля, въведете оценки за качество, изпълнение, документация или цена преди генериране на файлове!');
-                return;
-            }
 
             document.getElementById('loading').style.display = 'block';
             document.getElementById('pdfBtn').disabled = true;
