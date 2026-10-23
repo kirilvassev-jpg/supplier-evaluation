@@ -555,12 +555,13 @@
                 updateSupplierOptions();
 
                 // Запис в SharePoint през Power Automate (не блокира PDF/CSV при грешка)
+                const classification = total > 0 ? document.getElementById('classification').textContent.trim() : '';
                 let savedToSharePoint = true;
                 try {
                     const resp = await fetch(FLOW_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ evaluator, supplier, date, quality, delivery, documentation, price, total })
+                        body: JSON.stringify({ evaluator, supplier, date, quality, delivery, documentation, price, total, classification })
                     });
                     if (!resp.ok) throw new Error('HTTP ' + resp.status);
                 } catch (flowError) {
